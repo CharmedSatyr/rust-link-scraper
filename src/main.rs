@@ -19,27 +19,32 @@ fn main() -> Result<()> {
     let response: reqwest::Response = loop {
         println!("Enter a full url to scrape for links, e.g., \"https://www.nytimes.com\":");
 
-        let mut url = String::new();
+        let mut entry = String::new();
+
         io::stdin()
-            .read_line(&mut url)
+            .read_line(&mut entry)
             .expect("Failed to read input!");
 
         println!("Reading input...");
 
-        let result = reqwest::get(&url);
+        let trimmed_entry = entry.trim();
+
+        let result = reqwest::get(trimmed_entry);
+
         match result {
             Ok(r) => {
                 break r;
             }
             Err(e) => {
-                println!("Invalid URL! Error: {}.", e);
+                println!("Invalid entry! Error: {}.", e);
                 continue;
             }
         };
     };
 
-    // Joke
-    match response.url().as_str() {
+    let valid_url = response.url().as_str();
+
+    match valid_url {
         "https://www.streamate.com/"
         | "https://www.jerkmatelive.com/"
         | "https://www.youporn.com/"
@@ -51,17 +56,19 @@ fn main() -> Result<()> {
         _ => (),
     };
 
-    println!("Finding links for \"{}\"...", response.url().as_str());
+    println!("Finding links for \"{}\"...", valid_url);
 
     let mut links = HashSet::new();
     let mut count = 0;
 
-    match Document::from_read(response) {
+    let document = Document::from_read(response);
+
+    match document {
         Ok(doc) => doc
             .find(Name("a"))
             .filter_map(|n| n.attr("href"))
             .for_each(|link| {
-                count = count + 1;
+                count += 1;
                 links.insert(link.to_string());
             }),
         Err(_) => println!("Error reading the website. This program requires UTF-8 encoding."),
@@ -71,7 +78,7 @@ fn main() -> Result<()> {
     }
 
     println!(
-        "\nDiscovered {} links, {} of which are unique.",
+        "\nFound {} links, {} of which are unique.",
         count,
         links.len()
     );
