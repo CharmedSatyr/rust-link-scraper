@@ -5,6 +5,7 @@ extern crate select;
 
 use select::document::Document;
 use select::predicate::Name;
+use std::collections::HashSet;
 use std::{io, thread, time};
 
 error_chain! {
@@ -38,13 +39,13 @@ fn main() -> Result<()> {
     };
 
     // Joke
-    let sec = time::Duration::from_millis(1000);
     match response.url().as_str() {
         "https://www.streamate.com/"
         | "https://www.jerkmatelive.com/"
         | "https://www.youporn.com/"
         | "https://www.pornhub.com/" => {
             println!("Porn? You hound!");
+            let sec = time::Duration::from_millis(1000);
             thread::sleep(sec);
         }
         _ => (),
@@ -52,14 +53,28 @@ fn main() -> Result<()> {
 
     println!("Finding links for \"{}\"...", response.url().as_str());
 
+    let mut links = HashSet::new();
+    let mut count = 0;
+
     match Document::from_read(response) {
         Ok(doc) => doc
             .find(Name("a"))
             .filter_map(|n| n.attr("href"))
-            .for_each(|x| println!("{}", x)),
+            .for_each(|link| {
+                count = count + 1;
+                links.insert(link.to_string());
+            }),
         Err(_) => println!("Error reading the website. This program requires UTF-8 encoding."),
     }
-    // Add to a hashmap
-    // If hashmap has len 0, message
+    for link in &links {
+        println!("{}", link);
+    }
+
+    println!(
+        "\nDiscovered {} links, {} of which are unique.",
+        count,
+        links.len()
+    );
+
     Ok(())
 }
