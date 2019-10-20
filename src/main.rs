@@ -47,20 +47,19 @@ fn main() -> Result<()> {
             println!("Porn? You hound!");
             thread::sleep(sec);
         }
-        "https://www.google.com/" => {
-            println!("This site has an encoding I can't handle right now.");
-            thread::sleep(sec);
-        }
         _ => (),
     };
 
     println!("Finding links for \"{}\"...", response.url().as_str());
 
-    Document::from_read(response)
-        .expect("Cannot read response...")
-        .find(Name("a"))
-        .filter_map(|n| n.attr("href"))
-        .for_each(|x| println!("{}", x)); // Add to a vector
-                                          // If vector has len 0, message
+    match Document::from_read(response) {
+        Ok(doc) => doc
+            .find(Name("a"))
+            .filter_map(|n| n.attr("href"))
+            .for_each(|x| println!("{}", x)),
+        Err(_) => println!("Error reading the website. This program requires UTF-8 encoding."),
+    }
+    // Add to a hashmap
+    // If hashmap has len 0, message
     Ok(())
 }
