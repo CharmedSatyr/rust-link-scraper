@@ -5,11 +5,7 @@ extern crate select;
 
 mod helpers;
 
-use helpers::{find_broken_links, get_base_url, handle_entry, joke, print_unique_links};
-use select::document::Document;
-use select::predicate::Name;
-use std::{collections::HashSet, process};
-use url::{ParseError, Url};
+use helpers::*;
 
 error_chain! {
     foreign_links {
@@ -23,56 +19,22 @@ fn main() -> Result<()> {
 
     joke(&response);
 
-    println!("Finding links in \"{}\"...", response.url().as_str());
+    let url_and_html = get_response(response);
+    let url = url_and_html.0;
+    let html = url_and_html.1;
 
-    let url = Url::parse(response.url().as_str()).unwrap();
-    let document = Document::from_read(response);
-    let document = match document {
-        Ok(doc) => doc,
-        Err(e) => {
-            println!("Error reading website: {}.", e);
-            process::exit(1);
-        }
-    };
+    let base_url = get_base_url(&url, &html);
 
-    let base_url = get_base_url(&url, &document);
+    let links_and_count = get_links(&html, &base_url);
+    let links = links_and_count.0;
+    let total_count = links_and_count.1;
 
-    let mut links = HashSet::new();
-    let mut count = 0;
-
-    document
-        .find(Name("a"))
-        .filter_map(|n| n.attr("href"))
-        .for_each(|link| {
-            match Url::parse(link) {
-                Ok(url) => {
-                    count += 1;
-                    links.insert(url.as_str().to_owned());
-                }
-                Err(ParseError::RelativeUrlWithoutBase) => {
-                    let l = base_url
-                        .join(link)
-                        .expect("Trouble resolving relative URL.");
-                    links.insert(l.as_str().to_owned());
-                }
-                Err(e) => println!("Could not parse \"{}\".", e),
-            };
-        });
-
-    if links.len() == 0 {
-        println!("No links were found.");
-        process::exit(0);
-    }
-
-    print_unique_links(&links);
-
+    let unique_count = find_unique_links(&links);
     let broken_count = find_broken_links(&links);
 
     println!(
         "\nFound {} links, {} of which are unique, and {} of which are broken.",
-        count,
-        links.len(),
-        broken_count
+        total_count, unique_count, broken_count
     );
 
     Ok(())
