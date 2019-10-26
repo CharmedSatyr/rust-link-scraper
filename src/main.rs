@@ -3,10 +3,13 @@ extern crate error_chain;
 extern crate reqwest;
 extern crate select;
 
+mod helpers;
+
+use helpers::{find_broken_links, get_base_url, handle_entry, joke, print_unique_links};
 use select::document::Document;
 use select::predicate::Name;
-use std::collections::HashSet;
-use std::{io, thread, time};
+use std::{collections::HashSet, process};
+use url::{ParseError, Url};
 
 error_chain! {
     foreign_links {
@@ -16,71 +19,60 @@ error_chain! {
 }
 
 fn main() -> Result<()> {
-    let response: reqwest::Response = loop {
-        println!("Enter a full url to scrape for links, e.g., \"https://www.nytimes.com\":");
+    let response = handle_entry();
 
-        let mut entry = String::new();
+    joke(&response);
 
-        io::stdin()
-            .read_line(&mut entry)
-            .expect("Failed to read input!");
+    println!("Finding links in \"{}\"...", response.url().as_str());
 
-        println!("Reading input...");
-
-        let trimmed_entry = entry.trim();
-
-        let result = reqwest::get(trimmed_entry);
-
-        match result {
-            Ok(r) => {
-                break r;
-            }
-            Err(e) => {
-                println!("Invalid entry! Error: {}.", e);
-                continue;
-            }
-        };
-    };
-
-    let valid_url = response.url().as_str();
-
-    match valid_url {
-        "https://www.streamate.com/"
-        | "https://www.jerkmatelive.com/"
-        | "https://www.youporn.com/"
-        | "https://www.pornhub.com/" => {
-            println!("Porn? You hound!");
-            let sec = time::Duration::from_millis(1000);
-            thread::sleep(sec);
+    let url = Url::parse(response.url().as_str()).unwrap();
+    let document = Document::from_read(response);
+    let document = match document {
+        Ok(doc) => doc,
+        Err(e) => {
+            println!("Error reading website: {}.", e);
+            process::exit(1);
         }
-        _ => (),
     };
 
-    println!("Finding links for \"{}\"...", valid_url);
+    let base_url = get_base_url(&url, &document);
 
     let mut links = HashSet::new();
     let mut count = 0;
 
-    let document = Document::from_read(response);
+    document
+        .find(Name("a"))
+        .filter_map(|n| n.attr("href"))
+        .for_each(|link| {
+            match Url::parse(link) {
+                Ok(url) => {
+                    count += 1;
+                    links.insert(url.as_str().to_owned());
+                }
+                Err(ParseError::RelativeUrlWithoutBase) => {
+                    let l = base_url
+                        .join(link)
+                        .expect("Trouble resolving relative URL.");
+                    links.insert(l.as_str().to_owned());
+                }
+                Err(e) => println!("Could not parse \"{}\".", e),
+            };
+        });
 
-    match document {
-        Ok(doc) => doc
-            .find(Name("a"))
-            .filter_map(|n| n.attr("href"))
-            .for_each(|link| {
-                count += 1;
-                links.insert(link.to_string());
-            }),
-        Err(_) => println!("Error reading the website. This program requires UTF-8 encoding."),
+    if links.len() == 0 {
+        println!("No links were found.");
+        process::exit(0);
     }
-    for link in &links {
-        println!("{}", link);
-    }
+
+    print_unique_links(&links);
+
+    let broken_count = find_broken_links(&links);
 
     println!(
-        "\nFound {} links, {} of which are unique.",
+        "\nFound {} links, {} of which are unique, and {} of which are broken.",
         count,
-        links.len()
+        links.len(),
+        broken_count
     );
 
     Ok(())
