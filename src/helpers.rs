@@ -1,15 +1,28 @@
 extern crate select;
 extern crate url;
 
-use reqwest::StatusCode;
-use select::document::Document;
-use select::predicate::Name;
+use reqwest::{Response, StatusCode};
+use select::{document::Document, predicate::Name};
 use std::{collections::HashSet, io, process, thread, time};
 use url::{ParseError, Position, Url};
 
-pub fn handle_entry() -> reqwest::Response {
+fn add_protocol(trimmed_entry: &str) -> String {
+    let insecure = String::from("http://");
+    let mut with_protocol = String::from("https://");
+
+    let mut result = trimmed_entry;
+    if trimmed_entry[..8] != with_protocol && trimmed_entry[..7] != insecure {
+        with_protocol.push_str(trimmed_entry);
+        result = &with_protocol;
+    }
+    String::from(result)
+}
+
+pub fn handle_entry() -> Response {
     loop {
-        println!("Enter a full url to scrape for links, e.g., \"https://www.nytimes.com\", or enter \"q\" to quit.");
+        println!(
+            "Enter a URL to scrape for links, e.g., \"www.nytimes.com\", or enter \"q\" to quit."
+        );
 
         let mut entry = String::new();
 
@@ -19,16 +32,16 @@ pub fn handle_entry() -> reqwest::Response {
 
         let trimmed_entry = entry.trim();
 
-        match trimmed_entry {
-            "q" => process::exit(0),
-            _ => (),
-        };
+        if trimmed_entry == "q" {
+            process::exit(0);
+        }
 
-        let result = reqwest::get(trimmed_entry);
+        let trimmed_entry = add_protocol(trimmed_entry);
+        let result = reqwest::get(&trimmed_entry);
 
         match result {
-            Ok(r) => {
-                break r;
+            Ok(response) => {
+                break response;
             }
             Err(e) => {
                 println!("Invalid entry! Error: {}.", e);
@@ -38,7 +51,7 @@ pub fn handle_entry() -> reqwest::Response {
     }
 }
 
-pub fn joke(response: &reqwest::Response) {
+pub fn joke(response: &Response) {
     match response.url().as_str() {
         "https://www.streamate.com/"
         | "https://www.jerkmatelive.com/"
@@ -53,7 +66,7 @@ pub fn joke(response: &reqwest::Response) {
     };
 }
 
-pub fn get_response(response: reqwest::Response) -> (Url, Document) {
+pub fn get_response(response: Response) -> (Url, Document) {
     println!("\nReading \"{}\"...", response.url().as_str());
     let url = Url::parse(response.url().as_str()).unwrap();
     let document = Document::from_read(response);

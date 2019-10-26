@@ -33,7 +33,7 @@ fn main() -> Result<()> {
     let broken_count = find_broken_links(&links);
 
     println!(
-        "\nFound {} links, {} of which are unique, and {} of which are broken.",
+        "\nFound {} links, {} of which are unique and {} of which are broken.",
         total_count, unique_count, broken_count
     );
 
