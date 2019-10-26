@@ -5,12 +5,10 @@ extern crate select;
 
 mod helpers;
 
-use helpers::get_base_url;
-//use reqwest::StatusCode;
+use helpers::{find_broken_links, get_base_url, handle_entry, joke, print_unique_links};
 use select::document::Document;
 use select::predicate::Name;
-use std::collections::HashSet;
-use std::{io, process, thread, time};
+use std::{collections::HashSet, process};
 use url::{ParseError, Url};
 
 error_chain! {
@@ -21,57 +19,18 @@ error_chain! {
 }
 
 fn main() -> Result<()> {
-    let response: reqwest::Response = loop {
-        println!("Enter a full url to scrape for links, e.g., \"https://www.nytimes.com\", or enter \"q\" to quit.");
+    let response = handle_entry();
 
-        let mut entry = String::new();
+    joke(&response);
 
-        io::stdin()
-            .read_line(&mut entry)
-            .expect("Failed to read input!");
-
-        let trimmed_entry = entry.trim();
-
-        match trimmed_entry {
-            "q" => process::exit(0),
-            _ => (),
-        };
-
-        println!("Reading input...");
-
-        let result = reqwest::get(trimmed_entry);
-
-        match result {
-            Ok(r) => {
-                break r;
-            }
-            Err(e) => {
-                println!("Invalid entry! Error: {}.", e);
-                continue;
-            }
-        };
-    };
-
-    match response.url().as_str() {
-        "https://www.streamate.com/"
-        | "https://www.jerkmatelive.com/"
-        | "https://www.youporn.com/"
-        | "https://www.pornhub.com/" => {
-            println!("Porn? You hound!");
-            let sec = time::Duration::from_millis(1000);
-            thread::sleep(sec);
-        }
-        _ => (),
-    };
-
-    println!("Finding links for \"{}\"...", response.url().as_str());
+    println!("Finding links in \"{}\"...", response.url().as_str());
 
     let url = Url::parse(response.url().as_str()).unwrap();
     let document = Document::from_read(response);
     let document = match document {
         Ok(doc) => doc,
-        Err(_) => {
-            println!("Error reading website. It is UTF-8 encoded? Please try another site..."); // google.com issue
+        Err(e) => {
+            println!("Error reading website: {}.", e);
             process::exit(1);
         }
     };
@@ -88,33 +47,32 @@ fn main() -> Result<()> {
             match Url::parse(link) {
                 Ok(url) => {
                     count += 1;
-                    links.insert(url);
+                    links.insert(url.as_str().to_owned());
                 }
                 Err(ParseError::RelativeUrlWithoutBase) => {
-                    links.insert(base_url.join(link).unwrap());
+                    let l = base_url
+                        .join(link)
+                        .expect("Trouble resolving relative URL.");
+                    links.insert(l.as_str().to_owned());
                 }
-                Err(e) => println!("Could not parse '{}'.", e),
+                Err(e) => println!("Could not parse \"{}\".", e),
             };
         });
-    /*
-        let mut broken = 0;
-        for link in &links {
-            let res = reqwest::get(link).expect("Error reading link.");
-            let doc = Document::from_read(res)?;
 
-            match res.status() {
-                StatusCode::NOT_FOUND => {
-                    broken += 1;
-                }
-                _ => (),
-            };
-            println!("{}", link);
-        }
-    */
+    if links.len() == 0 {
+        println!("No links were found.");
+        process::exit(0);
+    }
+
+    print_unique_links(&links);
+
+    let broken_count = find_broken_links(&links);
+
     println!(
-        "\nFound {} links, {} of which are unique.",
+        "\nFound {} links, {} of which are unique, and {} of which are broken.",
         count,
         links.len(),
+        broken_count
     );
 
     Ok(())
