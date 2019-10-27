@@ -74,7 +74,8 @@ pub fn handle_entry() -> Response {
 
 pub fn joke(response: &Response) {
     match response.url().as_str() {
-        "https://www.streamate.com/"
+        "https://streamate.com/"
+        | "https://www.streamate.com/"
         | "https://www.jerkmatelive.com/"
         | "https://www.heidismembersonlyclub.com/"
         | "https://www.youpornlive.com/"
