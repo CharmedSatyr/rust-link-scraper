@@ -29,21 +29,27 @@ fn main() -> Result<()> {
 
     let base_url = get_base_url(&url, &html);
 
-    let links_and_count = get_links(&html, &base_url);
-    let links = links_and_count.0;
-    let total_count = links_and_count.1;
+    let links = get_links(&html, &base_url);
 
-    let unique_count = find_unique_links(&links);
-    let broken_count = find_broken_links(&links);
+    let counts = check_link_status(links);
 
     t.attr(Bold).unwrap();
-    writeln!(
+    write!(
         t,
-        "\nFound {} links, {} of which are unique and {} of which are broken.\n",
-        total_count, unique_count, broken_count
+        "\nScraped {} total elements, {} of which are unique.",
+        counts.0,
+        counts.1 + counts.2 + counts.3
     )
     .unwrap();
     t.reset().unwrap();
+
+    println!(
+        "
+‣ {} valid URLs
+‣ {} redirects or not found responses
+‣ {} invalid status codes or other elements\n",
+        counts.1, counts.2, counts.3
+    );
 
     Ok(())
 }
