@@ -7,7 +7,7 @@ This command line link scraper takes a valid website URL and returns a list of l
 ## Instructions
 
 - Make sure Rust is properly configured on your computer. Check [here](https://www.rust-lang.org/tools/install) for installation details. This project was made with rustc 1.38.0.
-- Clone this repository and navigate to the `rust-link-scraper` directory in your terminal.
+- Clone this repository and navigate to the `rust-link-scraper` directory using your terminal.
 - At the project root, run `cargo run` to install all dependencies, compile the project, and start it.
 - Follow the onscreen instructions.
 - Please open an issue for any bugs you find.
