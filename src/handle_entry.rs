@@ -30,9 +30,9 @@ pub fn handle_entry() -> Response {
         }
 
         let trimmed_entry = add_protocol(trimmed_entry);
-        let result = get(&trimmed_entry);
+        let result_from_initial_get_request_to_entry = get(&trimmed_entry);
 
-        match result {
+        match result_from_initial_get_request_to_entry {
             Ok(response) => {
                 break response;
             }
