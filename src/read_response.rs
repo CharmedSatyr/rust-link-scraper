@@ -4,7 +4,7 @@ use std::process;
 use term::color::CYAN;
 use url::Url;
 
-pub fn get_response(response: Response) -> (Url, Document) {
+pub fn read_response(response: Response) -> (Url, Document) {
     let mut t = term::stdout().unwrap();
     print!("\nReading ");
     t.fg(CYAN).unwrap();

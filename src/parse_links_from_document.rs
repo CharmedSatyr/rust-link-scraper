@@ -2,7 +2,7 @@ use select::{document::Document, predicate::Name};
 use std::{collections::HashSet, process};
 use url::{ParseError, Url};
 
-pub fn get_links(document: &Document, base_url: &Url) -> (HashSet<String>) {
+pub fn parse_links_from_document(document: &Document, base_url: &Url) -> (HashSet<String>) {
     let mut links = HashSet::new();
 
     document

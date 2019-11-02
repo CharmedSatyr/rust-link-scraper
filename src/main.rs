@@ -5,19 +5,19 @@ extern crate select;
 extern crate term;
 
 mod add_protocol;
-mod check_link_status;
-mod get_base_url;
-mod get_links;
-mod get_response;
+mod get_link_status;
 mod handle_entry;
+mod identify_base_url;
 mod joke;
+mod parse_links_from_document;
+mod read_response;
 
-use check_link_status::*;
-use get_base_url::*;
-use get_links::*;
-use get_response::*;
+use get_link_status::*;
 use handle_entry::*;
+use identify_base_url::*;
 use joke::*;
+use parse_links_from_document::*;
+use read_response::*;
 use std::{thread, time};
 use term::Attr::Bold;
 
@@ -41,15 +41,15 @@ fn main() -> Result<()> {
         thread::sleep(pause);
     }
 
-    let url_and_html = get_response(response);
+    let url_and_html = read_response(response);
     let url = url_and_html.0;
     let html = url_and_html.1;
 
-    let base_url = get_base_url(&url, &html);
+    let base_url = identify_base_url(&url);
 
-    let links = get_links(&html, &base_url);
+    let links = parse_links_from_document(&html, &base_url);
 
-    let counts = check_link_status(links);
+    let counts = get_link_status(links);
 
     t.attr(Bold).unwrap();
     write!(

@@ -9,7 +9,7 @@ use std::{
 };
 use term::color::{BRIGHT_BLACK, CYAN, MAGENTA};
 
-pub fn check_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
+pub fn get_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
     print!("\nValidating links...");
     stdout().flush().unwrap();
 
