@@ -16,7 +16,7 @@ pub fn add_protocol(trimmed_entry: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::add_protocol;
 
     #[test]
     fn add_protocol_adds_https_when_missing_protocol() {

@@ -18,6 +18,7 @@ use get_links::*;
 use get_response::*;
 use handle_entry::*;
 use joke::*;
+use std::{thread, time};
 use term::Attr::Bold;
 
 error_chain! {
@@ -32,7 +33,13 @@ fn main() -> Result<()> {
 
     let response = handle_entry();
 
-    joke(&response);
+    let light_humor = joke(response.url().as_str());
+
+    if light_humor.len() > 0 {
+        println!("{}", light_humor);
+        let pause = time::Duration::new(3, 0);
+        thread::sleep(pause);
+    }
 
     let url_and_html = get_response(response);
     let url = url_and_html.0;
