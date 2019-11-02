@@ -4,9 +4,20 @@ extern crate reqwest;
 extern crate select;
 extern crate term;
 
-mod helpers;
+mod add_protocol;
+mod check_link_status;
+mod get_base_url;
+mod get_links;
+mod get_response;
+mod handle_entry;
+mod joke;
 
-use helpers::*;
+use check_link_status::*;
+use get_base_url::*;
+use get_links::*;
+use get_response::*;
+use handle_entry::*;
+use joke::*;
 use term::Attr::Bold;
 
 error_chain! {
