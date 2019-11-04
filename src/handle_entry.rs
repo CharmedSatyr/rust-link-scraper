@@ -44,4 +44,23 @@ pub fn handle_entry() -> Response {
     }
 }
 
-// Unclear how to mock stdin and reqwest responses for tests
+#[cfg(test)]
+mod tests {
+    // TODO: Write tests. How to mock stdin and responses to reqwest within this function?
+    // Simple test page: https://charmedsatyr.github.io/document/
+
+    #[test]
+    fn handle_entry_should_return_response_from_valid_url_input() {
+        //
+    }
+
+    #[test]
+    fn handle_entry_should_exit_on_q_input() {
+        //
+    }
+
+    #[test]
+    fn handle_entry_should_loop_on_invalid_url_input() {
+        //
+    }
+}

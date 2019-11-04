@@ -32,3 +32,19 @@ pub fn parse_links_from_document(document: &Document, base_url: &Url) -> (HashSe
 
     links
 }
+
+#[cfg(test)]
+mod tests {
+    // TODO: Write tests. How to mock Document?
+    // Simple test page: https://charmedsatyr.github.io/document/
+
+    #[test]
+    fn parse_links_from_document_returns_hashset_of_strings_if_document_contains_links() {
+        //
+    }
+
+    #[test]
+    fn parse_links_from_document_exits_with_message_if_document_contains_no_links() {
+        //
+    }
+}

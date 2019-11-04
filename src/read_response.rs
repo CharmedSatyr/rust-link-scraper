@@ -23,3 +23,19 @@ pub fn read_response(response: Response) -> (Url, Document) {
     };
     (url, document)
 }
+
+#[cfg(test)]
+mod tests {
+    // TODO: Write tests. How to mock Response, Url, Document?
+    // Simple test page: https://charmedsatyr.github.io/document/
+
+    #[test]
+    fn read_response_should_return_url_and_document_from_valid_response() {
+        //
+    }
+
+    #[test]
+    fn read_response_should_exit_with_message_on_invalid_response() {
+        //
+    }
+}

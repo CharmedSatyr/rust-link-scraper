@@ -75,4 +75,28 @@ pub fn get_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
     )
 }
 
-// Unclear how to mock reqwest responses for tests
+#[cfg(test)]
+mod tests {
+    // TODO: Write tests. How to mock responses to reqwest within this function?
+    // Simple test page: https://charmedsatyr.github.io/document/
+
+    #[test]
+    fn get_link_status_should_return_correct_number_of_total_links_in_hashset() {
+        //
+    }
+
+    #[test]
+    fn get_link_status_should_return_correct_number_of_good_links_in_hashset() {
+        //
+    }
+
+    #[test]
+    fn get_link_status_should_return_correct_number_of_broken_links_in_hashset() {
+        //
+    }
+
+    #[test]
+    fn get_link_status_should_return_correct_number_of_not_links_in_hashset() {
+        //
+    }
+}

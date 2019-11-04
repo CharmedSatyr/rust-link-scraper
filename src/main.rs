@@ -72,4 +72,13 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-// Unclear how to test side effects from main
+#[cfg(test)]
+mod tests {
+    // TODO: Write tests. How to spy on side effects?
+    // Simple test page: https://charmedsatyr.github.io/document/
+
+    #[test]
+    fn main_has_desired_side_effects() {
+        //
+    }
+}
