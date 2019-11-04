@@ -6,8 +6,7 @@ pub fn identify_base_url(url: &Url) -> Url {
 
 #[cfg(test)]
 mod tests {
-    //use super::identify_base_url;
-    use super::*;
+    use super::{identify_base_url, Url};
 
     #[test]
     fn identify_base_url_should_return_base_url_from_base_url() {
