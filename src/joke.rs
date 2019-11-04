@@ -23,6 +23,6 @@ mod tests {
 
     #[test]
     fn joke_should_return_empty_string_for_other_sites() {
-        assert_eq!("", joke(&"https://www.starbucks.com/"));
+        assert_eq!("", joke(&"https://www.example.com/"));
     }
 }
