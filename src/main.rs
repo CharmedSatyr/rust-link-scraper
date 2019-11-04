@@ -41,13 +41,13 @@ fn main() -> Result<()> {
         thread::sleep(pause);
     }
 
-    let url_and_html = read_response(response);
-    let url = url_and_html.0;
-    let html = url_and_html.1;
+    let url_and_document = read_response(response);
+    let url = url_and_document.0;
+    let document = url_and_document.1;
 
     let base_url = identify_base_url(&url);
 
-    let links = parse_links_from_document(&html, &base_url);
+    let links = parse_links_from_document(&document, &base_url);
 
     let counts = get_link_status(links);
 
