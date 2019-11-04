@@ -71,3 +71,5 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+
+// Unclear how to test side effects from main

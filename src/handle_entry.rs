@@ -43,3 +43,5 @@ pub fn handle_entry() -> Response {
         };
     }
 }
+
+// Unclear how to mock stdin and reqwest responses for tests

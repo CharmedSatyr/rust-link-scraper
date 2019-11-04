@@ -74,3 +74,5 @@ pub fn get_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
         not_links.len(),
     )
 }
+
+// Unclear how to mock reqwest responses for tests
