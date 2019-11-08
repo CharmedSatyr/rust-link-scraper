@@ -4,11 +4,17 @@ version = "0.1.0"
 authors = ["Joseph <z@charmed.tech>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 error-chain = "0.12.1"
 reqwest = "0.9.22"
 select = "0.4.3"
 url = "2.1.0"
 term = "0.6.1"
+
+[dev-dependencies]
+mockito = "0.21.0"
+
+[dev-dependencies.cargo-husky]
+version = "1.4.0"
+default-features = true
+features = ["precommit-hook", "run-cargo-clippy", "run-cargo-fmt"]
