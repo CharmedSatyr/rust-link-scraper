@@ -18,6 +18,7 @@ use identify_base_url::*;
 use joke::*;
 use parse_links_from_document::*;
 use read_response::*;
+use std::process;
 use std::{thread, time};
 use term::Attr::Bold;
 
@@ -48,6 +49,12 @@ fn main() -> Result<()> {
     let base_url = identify_base_url(&url);
 
     let links = parse_links_from_document(&document, &base_url);
+    if !links.is_empty() {
+        println!("No links were found on that page.");
+        process::exit(0);
+    } else {
+        println!("{} links found...", links.len());
+    }
 
     let counts = get_link_status(links);
 

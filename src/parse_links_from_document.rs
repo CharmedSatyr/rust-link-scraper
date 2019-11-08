@@ -1,5 +1,5 @@
 use select::{document::Document, predicate::Name};
-use std::{collections::HashSet, process};
+use std::collections::HashSet;
 use url::{ParseError, Url};
 
 pub fn parse_links_from_document(document: &Document, base_url: &Url) -> (HashSet<String>) {
@@ -23,28 +23,33 @@ pub fn parse_links_from_document(document: &Document, base_url: &Url) -> (HashSe
             };
         });
 
-    if !links.is_empty() {
-        println!("No links were found on that page.");
-        process::exit(0);
-    } else {
-        println!("{} links found...", links.len());
-    }
-
     links
 }
 
 #[cfg(test)]
 mod tests {
-    // TODO: Write tests. How to mock Document?
-    // Simple test page: https://charmedsatyr.github.io/document/
+    use super::{parse_links_from_document, Document, HashSet, Url};
 
     #[test]
     fn parse_links_from_document_returns_hashset_of_strings_if_document_contains_links() {
-        //
+        let document = Document::from(include_str!("./mocks/test_with_link.html"));
+        let base_url = Url::parse("https://www.example.com/").unwrap();
+
+        let mut mock_hash_map = HashSet::new();
+        mock_hash_map.insert(String::from("https://www.example.com/"));
+
+        let fn_result = parse_links_from_document(&document, &base_url);
+
+        assert_eq!(mock_hash_map, fn_result);
     }
 
     #[test]
-    fn parse_links_from_document_exits_with_message_if_document_contains_no_links() {
-        //
+    fn parse_links_from_document_returns_empty_hashset_if_document_contains_no_links() {
+        let document = Document::from(include_str!("./mocks/test_no_link.html"));
+        let base_url = Url::parse("https://www.example.com/").unwrap();
+
+        let fn_result = parse_links_from_document(&document, &base_url);
+
+        assert!(fn_result.len() == 0);
     }
 }
