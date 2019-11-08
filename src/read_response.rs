@@ -26,12 +26,19 @@ pub fn read_response(response: Response) -> (Url, Document) {
 
 #[cfg(test)]
 mod tests {
-    // TODO: Write tests. How to mock Response, Url, Document?
-    // Simple test page: https://charmedsatyr.github.io/document/
+    //use super::{read_response, Document, Response, Url};
+    //    use mockito;
+    // TODO: Write tests. How to mock Response? Mockito?
 
     #[test]
     fn read_response_should_return_url_and_document_from_valid_response() {
-        //
+        //let url = Url::parse("https://www.example.com/");
+        //let document = Document::from(include_str!("./mocks/test_with_link.html"));
+
+        //let mock_response = Response {url, document}; //the response should include a url that matches `url`. And Document
+        //should be able to read it into `document`;
+
+        //assert_eq!(read_response(mock_response), (url, document));
     }
 
     #[test]
