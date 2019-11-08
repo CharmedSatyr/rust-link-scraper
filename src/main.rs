@@ -35,7 +35,7 @@ fn main() -> Result<()> {
 
     let light_humor = joke(response.url().as_str());
 
-    if light_humor.len() > 0 {
+    if !light_humor.is_empty() {
         println!("{}", light_humor);
         let pause = time::Duration::new(3, 0);
         thread::sleep(pause);

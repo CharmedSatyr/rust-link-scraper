@@ -37,7 +37,7 @@ pub fn get_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
 
     let mut t = term::stdout().unwrap();
 
-    if good_links.len() > 0 {
+    if !good_links.is_empty() {
         println!("\nThe following pages were found:");
         for good_link in &good_links {
             print!("‣ ");
@@ -47,7 +47,7 @@ pub fn get_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
         }
     }
 
-    if broken_links.len() > 0 {
+    if !broken_links.is_empty() {
         println!("\nThe following pages were not found or cause redirects:");
         for broken_link in &broken_links {
             print!("‣ ");
@@ -57,7 +57,7 @@ pub fn get_link_status(links: HashSet<String>) -> (usize, usize, usize, usize) {
         }
     }
 
-    if not_links.len() > 0 {
+    if !not_links.is_empty() {
         println!("\nThe following returned invalid status codes or are not URLs:");
         for not_link in &not_links {
             print!("‣ ");

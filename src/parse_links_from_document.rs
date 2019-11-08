@@ -23,7 +23,7 @@ pub fn parse_links_from_document(document: &Document, base_url: &Url) -> (HashSe
             };
         });
 
-    if links.len() == 0 {
+    if !links.is_empty() {
         println!("No links were found on that page.");
         process::exit(0);
     } else {

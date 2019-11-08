@@ -2,16 +2,16 @@ pub fn add_protocol(trimmed_entry: &str) -> String {
     let insecure = String::from("http://");
     let mut with_protocol = String::from("https://");
 
-    let mut result = trimmed_entry;
     if (trimmed_entry.len() > 7
         && trimmed_entry[..8] != with_protocol
         && trimmed_entry[..7] != insecure)
         || (trimmed_entry.len() <= 7)
     {
         with_protocol.push_str(trimmed_entry);
-        result = &with_protocol;
+        with_protocol
+    } else {
+        String::from(trimmed_entry)
     }
-    String::from(result)
 }
 
 #[cfg(test)]
